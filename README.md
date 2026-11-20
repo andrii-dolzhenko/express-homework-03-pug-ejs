@@ -4,7 +4,7 @@ An Express 5 project for Homework 62.1: adding server-rendered HTML templates to
 
 ## Current baseline
 
-This initial commit copies the **working Express HW-02 API**, without its static Playground or Pages deployment. PUG user pages and EJS article pages will be implemented in separate pull requests.
+This project is based on the **working Express HW-02 API**, without its old static Playground or Pages deployment. PUG user pages are now implemented; EJS article pages will follow in a separate pull request.
 
 - Express 5 REST API for users and articles, backed by in-memory Maps
 - Logging, validation, demo authentication, article access control, and error handling
@@ -25,12 +25,12 @@ The local server listens at `http://localhost:3000`. Stop it with `Ctrl+C`.
 
 ## Planned HTML pages
 
-The next PRs will add the server-rendered pages required by the assignment:
+The assignment calls for these server-rendered pages:
 
 | Route | Template engine | Page |
 | --- | --- | --- |
-| `GET /users` | PUG | Users list |
-| `GET /users/:userId` | PUG | User details |
+| `GET /users` | PUG | Users list (implemented for `Accept: text/html`) |
+| `GET /users/:userId` | PUG | User details (implemented for `Accept: text/html`) |
 | `GET /articles` | EJS | Articles list |
 | `GET /articles/:articleId` | EJS | Article details |
 
@@ -42,13 +42,17 @@ Existing `GET`, `POST`, `PUT`, and `DELETE` operations are under `/users` and `/
 
 Demonstration authentication is **not production security**. Session state uses an in-memory store and is not appropriate for production deployment.
 
+## HTML and JSON responses
+
+Browsers requesting `Accept: text/html` receive PUG-rendered user pages. Existing REST clients continue to receive JSON. Express renders HTML on the server via `res.render()`.
+
 ## Tests
 
 ```bash
 npm test
 ```
 
-The 36 existing HW-02 regression tests are preserved in this baseline. Separate tests for HTML rendering will be added with the new views. No tests are copied from the optional HW-03 reference archive.
+The 36 HW-02 regression tests are preserved. Four additional PUG rendering tests cover the new user pages; further EJS tests will follow. No tests are copied from the optional HW-03 reference archive.
 
 ---
 

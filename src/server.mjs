@@ -1,12 +1,17 @@
 // Express REST API із модульною архітектурою та навчальними middleware
 
 import express from 'express'
+import { resolve } from 'node:path'
 import router from './routes/index.mjs'
 import { logRequests } from './middlewares/logRequests.mjs'
 import { sessionMiddleware } from './middlewares/session.mjs'
 
 const PORT = 3000
 const app = express()
+
+// Use the .pug extension explicitly now; .ejs templates join in the next PR.
+app.set('views', resolve(process.cwd(), 'src/views'))
+app.set('view engine', 'pug')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
