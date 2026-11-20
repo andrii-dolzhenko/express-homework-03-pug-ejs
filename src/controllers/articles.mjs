@@ -1,7 +1,12 @@
 import { articles } from '../data/articles.mjs'
+import { wantsHtml } from '../utils/wantsHtml.mjs'
 
 export function listArticles(req, res) {
   const allArticles = Array.from(articles.entries()).map(([id, article]) => ({ id, ...article }))
+  if (wantsHtml(req)) {
+    return res.status(200).render('articles/list.ejs', { articles: allArticles })
+  }
+
   res.status(200).json(allArticles)
 }
 
@@ -22,7 +27,12 @@ export function getArticle(req, res) {
   if (!article) {
     return res.status(404).send('Not Found')
   }
-  res.status(200).json({ id: req.params.articleId, ...article })
+  const articleDetails = { id: req.params.articleId, ...article }
+  if (wantsHtml(req)) {
+    return res.status(200).render('articles/details.ejs', { article: articleDetails })
+  }
+
+  res.status(200).json(articleDetails)
 }
 
 export function updateArticle(req, res) {

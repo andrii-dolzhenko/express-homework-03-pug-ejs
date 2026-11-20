@@ -9,7 +9,7 @@ import { sessionMiddleware } from './middlewares/session.mjs'
 const PORT = 3000
 const app = express()
 
-// Use the .pug extension explicitly now; .ejs templates join in the next PR.
+// Both PUG and EJS use this views folder; explicit file extensions select the engine.
 app.set('views', resolve(process.cwd(), 'src/views'))
 app.set('view engine', 'pug')
 

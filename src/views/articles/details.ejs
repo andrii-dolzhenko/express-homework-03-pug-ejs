@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= article.title %> | Express Homework 03</title>
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Main navigation">
+        <a href="/users">Users</a>
+        <a href="/articles">Articles</a>
+      </nav>
+    </header>
+    <main>
+      <a href="/articles">← Back to articles</a>
+      <h1><%= article.title %></h1>
+      <dl>
+        <dt>Article ID</dt>
+        <dd><%= article.id %></dd>
+        <dt>Title</dt>
+        <dd><%= article.title %></dd>
+      </dl>
+    </main>
+    <footer>
+      <p>Copyright © 2026 Andrii Dolzhenko.</p>
+    </footer>
+  </body>
+</html>
