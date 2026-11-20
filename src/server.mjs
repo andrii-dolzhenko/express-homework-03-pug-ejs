@@ -22,6 +22,9 @@ app.use(logRequests)
 // Навчальні сесії: cookie містить лише ID; дані зберігаються на сервері.
 app.use(sessionMiddleware)
 
+// Shared stylesheet and favicon for server-rendered PUG / EJS pages.
+app.use('/assets', express.static(resolve(process.cwd(), 'src/public')))
+
 // Маршрути
 app.use(router)
 

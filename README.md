@@ -36,6 +36,12 @@ The assignment calls for these server-rendered pages:
 
 The existing JSON REST operations must remain available. Templates must render from the same server-side Maps, rather than from duplicated arrays or a browser-only simulation.
 
+## Shared design and responsive layout
+
+All four PUG and EJS pages use the same local CSS file at `/assets/css/styles.css` and a small SVG favicon. Express serves both from `src/public/` via `express.static()`. No external fonts, scripts, or CSS frameworks are required.
+
+The design includes responsive list cards, detail panels, navigation between Users and Articles, readable narrow-screen layouts, keyboard-visible focus, and reduced-motion support.
+
 ## Existing API and middleware
 
 Existing `GET`, `POST`, `PUT`, and `DELETE` operations are under `/users` and `/articles`. Additional routes are `POST /users/strict`, `POST /articles/strict`, `GET /session`, and `DELETE /session`.
