@@ -1,7 +1,12 @@
 import { users } from '../data/users.mjs'
+import { wantsHtml } from '../utils/wantsHtml.mjs'
 
 export function listUsers(req, res) {
   const allUsers = Array.from(users.entries()).map(([id, user]) => ({ id, ...user }))
+  if (wantsHtml(req)) {
+    return res.status(200).render('users/list.pug', { users: allUsers })
+  }
+
   res.status(200).json(allUsers)
 }
 
@@ -22,7 +27,12 @@ export function getUser(req, res) {
   if (!user) {
     return res.status(404).send('Not Found')
   }
-  res.status(200).json({ id: req.params.userId, ...user })
+  const userDetails = { id: req.params.userId, ...user }
+  if (wantsHtml(req)) {
+    return res.status(200).render('users/details.pug', { user: userDetails })
+  }
+
+  res.status(200).json(userDetails)
 }
 
 export function updateUser(req, res) {

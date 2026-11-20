@@ -1,0 +1,21 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title #{user.name} | Express Homework 03
+  body
+    header
+      nav(aria-label="Main navigation")
+        a(href="/users") Users
+        a(href="/articles") Articles
+    main
+      a(href="/users") ← Back to users
+      h1= user.name
+      dl
+        dt User ID
+        dd= user.id
+        dt Name
+        dd= user.name
+    footer
+      p Copyright © 2026 Andrii Dolzhenko.
