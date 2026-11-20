@@ -4,7 +4,7 @@ An Express 5 project for Homework 62.1: adding server-rendered HTML templates to
 
 ## Current baseline
 
-This project is based on the **working Express HW-02 API**, without its old static Playground or Pages deployment. PUG user pages are now implemented; EJS article pages will follow in a separate pull request.
+This project is based on the **working Express HW-02 API**, without its old static Playground or Pages deployment. PUG user pages and EJS article pages use separate rendering engines and share the same server data.
 
 - Express 5 REST API for users and articles, backed by in-memory Maps
 - Logging, validation, demo authentication, article access control, and error handling
@@ -23,7 +23,7 @@ npm start
 
 The local server listens at `http://localhost:3000`. Stop it with `Ctrl+C`.
 
-## Planned HTML pages
+## Server-rendered HTML pages
 
 The assignment calls for these server-rendered pages:
 
@@ -31,8 +31,8 @@ The assignment calls for these server-rendered pages:
 | --- | --- | --- |
 | `GET /users` | PUG | Users list (implemented for `Accept: text/html`) |
 | `GET /users/:userId` | PUG | User details (implemented for `Accept: text/html`) |
-| `GET /articles` | EJS | Articles list |
-| `GET /articles/:articleId` | EJS | Article details |
+| `GET /articles` | EJS | Articles list (implemented for `Accept: text/html`) |
+| `GET /articles/:articleId` | EJS | Article details (implemented for `Accept: text/html`) |
 
 The existing JSON REST operations must remain available. Templates must render from the same server-side Maps, rather than from duplicated arrays or a browser-only simulation.
 
@@ -44,7 +44,9 @@ Demonstration authentication is **not production security**. Session state uses 
 
 ## HTML and JSON responses
 
-Browsers requesting `Accept: text/html` receive PUG-rendered user pages. Existing REST clients continue to receive JSON. Express renders HTML on the server via `res.render()`.
+Browsers requesting `Accept: text/html` receive PUG-rendered user pages or EJS-rendered article pages. Other API clients continue to receive JSON. Express renders both formats on the server via `res.render()` with explicit `.pug` and `.ejs` extensions.
+
+After starting the server, open `http://localhost:3000/users` (PUG) and `http://localhost:3000/articles` (EJS), then follow a link to the details page.
 
 ## Tests
 
@@ -52,7 +54,7 @@ Browsers requesting `Accept: text/html` receive PUG-rendered user pages. Existin
 npm test
 ```
 
-The 36 HW-02 regression tests are preserved. Four additional PUG rendering tests cover the new user pages; further EJS tests will follow. No tests are copied from the optional HW-03 reference archive.
+The 36 HW-02 regression tests are preserved. Four PUG tests cover user pages, and six additional EJS tests cover article pages, JSON compatibility, missing records, shared data, and HTML escaping (46 total). No tests are copied from the optional HW-03 reference archive.
 
 ---
 
