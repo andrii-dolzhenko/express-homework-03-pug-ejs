@@ -1,19 +1,25 @@
 # Express.js · Homework 03 · PUG & EJS
 
-An Express 5 project for Homework 62.1: adding server-rendered HTML templates to an existing REST API while keeping its CRUD endpoints, middleware, and sessions working.
+An Express 5 application combining server-rendered PUG and EJS pages with a REST API for users and articles, while preserving CRUD operations, middleware, and server-side sessions.
 
-## Current baseline
+## Features
 
-This project is based on the **working Express HW-02 API**, without its old static Playground or Pages deployment. PUG user pages and EJS article pages use separate rendering engines and share the same server data.
+- **PUG** renders user lists and individual user pages.
+- **EJS** renders article lists and individual article pages.
+- **REST API** supports creating, reading, updating, and deleting users and articles.
+- **Shared data:** HTML pages and JSON responses use the same in-memory `Map` collections.
+- **Middleware:** request logging, input validation, demonstration authentication, article access checks, resource checks, and centralized error handling.
+- **Sessions:** a per-browser visit counter using `express-session`.
+- **Responsive UI:** shared CSS, SVG favicon, accessible navigation, visible keyboard focus, and reduced-motion support.
+- **Automated testing:** 52 Vitest and Supertest tests.
 
-- Express 5 REST API for users and articles, backed by in-memory Maps
-- Logging, validation, demo authentication, article access control, and error handling
-- `express-session` for a demonstration session visit counter
-- Vitest + Supertest regression suite (36 tests)
+## Tech stack
 
-## Install and run
+Node.js 24, Express 5, PUG 3, EJS 7, `express-session`, JavaScript ES modules, CSS, Vitest, and Supertest. Dependencies are tracked in `yarn.lock` using Yarn Classic.
 
-Requirements: Node.js 24 and Yarn Classic 1.22.22.
+## Installation and running
+
+From the project root:
 
 ```bash
 npm exec --yes --package=yarn@1.22.22 -- yarn install --frozen-lockfile
@@ -21,46 +27,112 @@ npm test
 npm start
 ```
 
-The local server listens at `http://localhost:3000`. Stop it with `Ctrl+C`.
+Open <http://localhost:3000/users> or <http://localhost:3000/articles>. The server runs on **port 3000**; stop it with `Ctrl+C`. For automatic restarts during development, use `npm run dev`.
 
-## Server-rendered HTML pages
+## Server-rendered pages
 
-The assignment calls for these server-rendered pages:
-
-| Route | Template engine | Page |
+| Route | Engine | Description |
 | --- | --- | --- |
-| `GET /users` | PUG | Users list (implemented for `Accept: text/html`) |
-| `GET /users/:userId` | PUG | User details (implemented for `Accept: text/html`) |
-| `GET /articles` | EJS | Articles list (implemented for `Accept: text/html`) |
-| `GET /articles/:articleId` | EJS | Article details (implemented for `Accept: text/html`) |
+| `GET /users` | PUG | List all users with links to their details |
+| `GET /users/:userId` | PUG | Show one user's name and ID |
+| `GET /articles` | EJS | List all articles with links to their details |
+| `GET /articles/:articleId` | EJS | Show one article's title and ID |
 
-The existing JSON REST operations must remain available. Templates must render from the same server-side Maps, rather than from duplicated arrays or a browser-only simulation.
+A browser sends `Accept: text/html`, so these four GET routes return server-rendered HTML via `res.render()`. Other clients continue to receive JSON. Both template engines read from the same in-memory data used by the REST API; neither a duplicate dataset nor a browser-side simulation is used.
 
-## Shared design and responsive layout
+PUG templates live in `src/views/users/`, and EJS templates live in `src/views/articles/`. Express selects the engine using the explicit `.pug` or `.ejs` extension.
 
-All four PUG and EJS pages use the same local CSS file at `/assets/css/styles.css` and a small SVG favicon. Express serves both from `src/public/` via `express.static()`. No external fonts, scripts, or CSS frameworks are required.
+## Routes and REST API
 
-The design includes responsive list cards, detail panels, navigation between Users and Articles, readable narrow-screen layouts, keyboard-visible focus, and reduced-motion support.
+| Method | Route | Response / behavior |
+| --- | --- | --- |
+| `GET` | `/` | Plain-text root response |
+| `GET` | `/users` | PUG user list with `Accept: text/html`; otherwise JSON array |
+| `POST` | `/users` | Create a user from a JSON `name` field; return `201` and JSON |
+| `GET` | `/users/:userId` | PUG user details with `Accept: text/html`; otherwise JSON object |
+| `PUT` | `/users/:userId` | Update an existing user's `name`; return JSON |
+| `DELETE` | `/users/:userId` | Delete an existing user; return `204 No Content` |
+| `POST` | `/users/strict` | Create a user; a Basic Authorization header is required for this demo route |
+| `GET` | `/articles` | EJS article list with `Accept: text/html`; otherwise JSON array |
+| `POST` | `/articles` | Create an article from a JSON `title` field; return `201` and JSON |
+| `GET` | `/articles/:articleId` | EJS article details with `Accept: text/html`; otherwise JSON object |
+| `PUT` | `/articles/:articleId` | Update an existing article's `title`; return JSON |
+| `DELETE` | `/articles/:articleId` | Delete an existing article; return `204 No Content` |
+| `POST` | `/articles/strict` | Create an article; a Basic Authorization header is required for this demo route |
+| `GET` | `/session` | Increment the current session's visit count; return `Visits: N` as text |
+| `DELETE` | `/session` | Destroy the current session and clear its cookie; return `204` |
+| `GET` | `/assets/css/styles.css` | Shared responsive stylesheet |
+| `GET` | `/assets/favicon.svg` | SVG favicon |
 
-## Existing API and middleware
+A missing user or article returns `404 Not Found`. Invalid user/article data returns `400 Bad Request`. User names must be nonempty strings of at most 100 characters; article titles must be nonempty strings of at most 200 characters. Both are trimmed during validation. Unexpected errors are handled centrally with a `500` response.
 
-Existing `GET`, `POST`, `PUT`, and `DELETE` operations are under `/users` and `/articles`. Additional routes are `POST /users/strict`, `POST /articles/strict`, `GET /session`, and `DELETE /session`.
+### Example requests
 
-Demonstration authentication is **not production security**. Session state uses an in-memory store and is not appropriate for production deployment.
+```bash
+# Server-rendered PUG page
+curl -i http://localhost:3000/users -H 'Accept: text/html'
 
-## HTML and JSON responses
+# JSON representation of the same users
+curl -i http://localhost:3000/users -H 'Accept: application/json'
 
-Browsers requesting `Accept: text/html` receive PUG-rendered user pages or EJS-rendered article pages. Other API clients continue to receive JSON. Express renders both formats on the server via `res.render()` with explicit `.pug` and `.ejs` extensions.
+# Server-rendered EJS page
+curl -i http://localhost:3000/articles -H 'Accept: text/html'
 
-After starting the server, open `http://localhost:3000/users` (PUG) and `http://localhost:3000/articles` (EJS), then follow a link to the details page.
+# Create a user
+curl -i -X POST http://localhost:3000/users \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Alex"}'
+```
 
-## Tests
+## Middleware and sessions
+
+- **Request logging:** logs request metadata and redacts sensitive fields in logged request bodies.
+- **Demo authentication:** logs whether an Authorization header is present; standard routes remain accessible.
+- **Optional strict authentication:** `x-require-auth: true` requires a Basic Authorization header (`401` if missing or malformed).
+- **Article access demonstration:** `DELETE /articles/:articleId` with `x-require-strict-access: true` requires the demo admin credential; otherwise it returns `403 Forbidden`.
+- **Input validation and resource existence:** check incoming data and reject nonexistent records.
+- **Sessions:** `GET /session` uses an HttpOnly `hw03.sid` cookie and a server-side visit counter; `DELETE /session` resets that session.
+
+These authentication and role checks are **educational stubs, not production security**: they do not authenticate real accounts. `express-session` uses the in-memory store for local coursework, not persistent production storage. Its cookie uses `SameSite=Lax`, lasts 10 minutes, and uses `Secure=false` for local HTTP. A real deployment would require HTTPS, secure cookies, proper credential checks, and a production-grade session store.
+
+## Testing
 
 ```bash
 npm test
 ```
 
-The 36 HW-02 regression tests are preserved. Four PUG tests cover user pages, and six additional EJS tests cover article pages, JSON compatibility, missing records, shared data, and HTML escaping (46 total). No tests are copied from the optional HW-03 reference archive.
+The test suite contains **52 tests**:
+
+| Test suite | Tests | Coverage |
+| --- | ---: | --- |
+| REST API | 23 | Core routes and CRUD responses |
+| Middleware | 9 | Logging, validation, authentication, and access control |
+| Sessions | 4 | Cookie persistence, isolation, reset, and compatibility |
+| PUG pages | 4 | HTML user pages and JSON compatibility |
+| EJS pages | 6 | HTML article pages, JSON compatibility, and escaping |
+| Shared styling | 6 | Stylesheet/favicon links and static assets |
+| **Total** | **52** | |
+
+## Project structure
+
+```text
+src/
+├── __test__/             # Vitest + Supertest tests
+├── controllers/          # Request handlers
+├── data/                 # In-memory user and article Maps
+├── middlewares/          # Logging, auth, validation, sessions, access checks
+├── public/
+│   ├── css/styles.css    # Shared responsive styling
+│   └── favicon.svg
+├── routes/               # Users, articles, and sessions
+├── utils/wantsHtml.mjs   # HTML vs JSON response selection
+├── views/
+│   ├── users/            # list.pug, details.pug
+│   └── articles/         # list.ejs, details.ejs
+└── server.mjs            # Express configuration and server
+```
+
+Records are stored in memory and reset when the server restarts. This project does not use a database or a hosted Express backend.
 
 ---
 
