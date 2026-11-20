@@ -29,6 +29,12 @@ npm start
 
 Open <http://localhost:3000/users> or <http://localhost:3000/articles>. The server runs on **port 3000**; stop it with `Ctrl+C`. For automatic restarts during development, use `npm run dev`.
 
+## Live demo
+
+**[Open the PUG + EJS demo](https://andrii-dolzhenko.github.io/express-homework-03-pug-ejs/)**
+
+The GitHub Pages version is a **static preview of HTML rendered by the actual Express application at build time**. It contains navigable PUG user lists/details and EJS article lists/details, generated from the server's seeded data. GitHub Pages cannot run Node.js: interactive REST writes, real-time data changes, and server-side sessions require running this repository locally (`npm start`). The preview is rebuilt and published by GitHub Actions when `main` changes.
+
 ## Server-rendered pages
 
 | Route | Engine | Description |

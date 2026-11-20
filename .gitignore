@@ -12,4 +12,4 @@ coverage/
 *.log
 *.js.map
 *.d.ts
-
+.pages-dist/
